@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kaitlinwalsh.finalproject.InstructionsPage"
+    android:backgroundTint="#36b9e1">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return To Main Menu"
+        android:textSize="20sp"
+        android:id="@+id/ReturnToMain"
+        android:longClickable="false"
+        android:textColor="#e7b01b"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:clickable="true"
+        android:layout_marginTop="32dp"
+        android:singleLine="true"
+        android:onClick="onInstructionsButton"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="HOW TO PLAY"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/ReturnToMain"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:backgroundTint="#37b6d3" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Move Doug left or right to catch files!"
+        android:id="@+id/textView"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="But, beware! Errors are all about!"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentEnd="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Get enough files without catching "
+        android:id="@+id/textView4"
+        android:layout_marginTop="63dp"
+        android:layout_below="@+id/textView7" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="too many errors &amp; you win!"
+        android:id="@+id/textView5"
+        android:layout_below="@+id/textView4"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Too many errors cause a "
+        android:id="@+id/textView7"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="STACK OVERFLOW"
+        android:id="@+id/textView13"
+        android:layout_below="@+id/textView7"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
