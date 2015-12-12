@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.newthinktank.helloagain.app.MainActivity"
+    android:background="@drawable/giphy"
+    android:clickable="true">
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        android:hint="Let's get Douggie with it"
+        android:textSize="25sp"
+        android:padding="15dp"
+        android:id="@+id/PlayButton"
+        android:textColor="#e3a11d"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:clickable="true"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="72dp"
+        android:onClick="onPlayButton"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/stakoverflow"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="138dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#00000000"
+        android:clickable="true"
+        tools:ignore="RtlHardcoded"
+        android:contentDescription="src/stakoverflow"
+        android:nestedScrollingEnabled="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="INSTRUCTIONS"
+        android:textSize="20sp"
+        android:id="@+id/InstructionsButton"
+        android:longClickable="false"
+        android:textColor="#e7b01b"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:clickable="true"
+        android:layout_below="@+id/PlayButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:singleLine="true"
+        android:onClick="onInstructionsButton"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="About"
+        android:id="@+id/AboutButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#e7b01b" />
+
+</RelativeLayout>

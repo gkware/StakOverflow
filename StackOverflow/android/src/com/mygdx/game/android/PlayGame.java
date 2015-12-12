@@ -1,0 +1,325 @@
+package com.mygdx.game.android;
+
+import java.util.Iterator;
+import android.content.Context;
+import java.util.Random;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.*;
+import android.os.Bundle;
+import android.util.Log;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.util.DisplayMetrics;
+
+
+
+public class PlayGame extends MainActivity {
+
+    // gameView will be the view of the game
+    // It will also hold the logic of the game
+    // and respond to screen touches as well
+    GameView gameView;
+
+
+    DisplayMetrics displaymetrics = new DisplayMetrics();
+    //displaymetrics = getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+    public int height = displaymetrics.heightPixels;
+    public int width = displaymetrics.widthPixels;
+    public boolean leftTouch;
+    public boolean rightTouch;
+    public int tracker;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize gameView and set it as the view
+        gameView = new GameView(this);
+        setContentView(gameView);
+
+    }
+
+    class GameView extends SurfaceView implements Runnable {
+
+        Thread gameThread = null;
+
+        SurfaceHolder ourHolder;
+
+        // A boolean which we will set and unset
+        // when the game is running- or not.
+        volatile boolean playing;
+
+        // A Canvas and a Paint object
+        Canvas canvas;
+        Paint paint;
+
+        // This variable tracks the game frame rate
+        long fps;
+
+        // This is used to help calculate the fps
+        private long timeThisFrame;
+
+        // Declare an object of type Bitmap
+        Bitmap Doug;
+
+        Bitmap Error;
+
+        // Bob starts off not moving
+        boolean isMoving = false;
+
+        // He can walk at 150 pixels per second
+        float walkSpeedPerSecond = 350;
+
+        // He starts 25 pixels from the left
+        float DougXPosition = width / 2;
+
+        float ErrorXPosition = width / 2;
+
+        float ErrorYPosition = height / 2;
+
+        public long errorframe;
+
+
+        // This special constructor method runs
+        public GameView(Context context) {
+            super(context);
+
+            // Initialize ourHolder and paint objects
+            ourHolder = getHolder();
+            paint = new Paint();
+
+            // Load Bob from his .png file
+            Doug = BitmapFactory.decodeResource(this.getResources(), R.drawable.douggie);
+
+            Error = BitmapFactory.decodeResource(this.getResources(), R.drawable.error);
+
+
+            // Set our boolean to true - game on!
+            playing = true;
+
+        }
+
+        @Override
+        public void run() {
+            while (playing) {
+
+
+                // Capture the current time in milliseconds in startFrameTime
+                long startFrameTime = System.currentTimeMillis();
+
+                // Update the frame
+                update();
+
+                // Draw the frame
+                draw();
+
+
+                // Calculate the fps this frame
+                // We can then use the result to
+                // time animations and more.
+                timeThisFrame = System.currentTimeMillis() - startFrameTime;
+
+                if (timeThisFrame > 0) {
+                    fps = 1000 / timeThisFrame;
+                }
+
+            }
+
+        }
+
+        //falling objects and collision detection goes here, for future reference (in update)
+
+        public void update() {
+
+            //ErrorYPosition= ErrorYPosition + (walkSpeedPerSecond / fps);
+
+
+            if (isMoving) {
+
+
+                if (DougXPosition == width) {
+                    DougXPosition = width - 1;
+                }
+
+                if (DougXPosition == 0) {
+                    DougXPosition = 1;
+                }
+
+                if (leftTouch) {
+                    DougXPosition = DougXPosition - (walkSpeedPerSecond / fps);
+
+                    ErrorYPosition = ErrorYPosition + (150 / fps);
+
+                }
+
+                if (rightTouch) {
+                    DougXPosition = DougXPosition + (walkSpeedPerSecond / fps);
+
+                    ErrorYPosition = ErrorYPosition + (150 / fps);
+                }
+
+
+            }
+
+
+        }
+
+        // Draw the newly updated scene
+        public void draw() {
+
+            // Make sure our drawing surface is valid or we crash
+            if (ourHolder.getSurface().isValid()) {
+                // Lock the canvas ready to draw
+                canvas = ourHolder.lockCanvas();
+
+                // Draw the background color
+                canvas.drawColor(Color.argb(255, 26, 128, 182));
+
+                // Choose the brush color for drawing
+                paint.setColor(Color.argb(255, 249, 129, 0));
+
+                Random r = new Random();
+                int i1 = r.nextInt(900 - 100) + 100;
+
+                ErrorYPosition = ErrorYPosition + (walkSpeedPerSecond / fps);
+
+                canvas.drawBitmap(Doug, DougXPosition, 800, paint);
+
+                canvas.drawBitmap(Error, i1, ErrorYPosition, paint);
+
+                if (ErrorYPosition > 800)
+                {
+                    ErrorYPosition = 0;
+                    canvas.drawBitmap(Error, i1, ErrorYPosition, paint);
+
+                }
+
+                // Draw everything to the screen
+                ourHolder.unlockCanvasAndPost(canvas);
+            }
+
+        }
+
+        // If SimpleGameEngine Activity is paused/stopped
+        // shutdown our thread.
+        public void pause() {
+            playing = false;
+            try {
+                gameThread.join();
+            } catch (InterruptedException e) {
+                Log.e("Error:", "joining thread");
+            }
+
+        }
+
+        // If SimpleGameEngine Activity is started then
+        // start our thread.
+        public void resume() {
+            playing = true;
+            gameThread = new Thread(this);
+            gameThread.start();
+        }
+
+        // The SurfaceView class implements onTouchListener
+        // So we can override this method and detect screen touches.
+
+        //Change to gyroscope code instead of touch code, will probably have to have two cases
+        //for each tilt direction
+        @Override
+        public boolean onTouchEvent(MotionEvent motionEvent) {
+            isMoving = true;
+
+            int x = (int) motionEvent.getX();
+
+            if (x < 500) {
+
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+
+                    // Player has touched the screen
+                    case MotionEvent.ACTION_DOWN:
+
+                        leftTouch = true;
+                        rightTouch = false;
+                        //ErrorYPosition= ErrorYPosition + (walkSpeedPerSecond / fps);
+
+                        break;
+
+                    // Player has removed finger from screen
+                    case MotionEvent.ACTION_UP:
+
+                        // ErrorYPosition= ErrorYPosition + (walkSpeedPerSecond / fps);
+                        // Set isMoving so doug does not move
+                        isMoving = false;
+
+                        break;
+                }
+            }
+
+            if (x > 500) {
+
+
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+
+                    // Player has touched the screen
+                    case MotionEvent.ACTION_DOWN:
+
+                        rightTouch = true;
+                        leftTouch = false;
+
+                        break;
+
+                    // Player has removed finger from screen
+                    case MotionEvent.ACTION_UP:
+
+                        // Set isMoving so doug does not move
+                        isMoving = false;
+
+                        break;
+                }
+
+            }
+            return true;
+        }
+
+    }
+
+
+    // This is the end of our GameView inner class
+
+    // More SimpleGameEngine methods will go here
+
+    // This method executes when the player starts the game
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Tell the gameView resume method to execute
+        gameView.resume();
+    }
+
+    // This method executes when the player quits the game
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Tell the gameView pause method to execute
+        gameView.pause();
+    }
+}
