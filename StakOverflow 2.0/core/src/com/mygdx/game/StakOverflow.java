@@ -58,9 +58,9 @@ public class StakOverflow extends ApplicationAdapter {
 		code.height = codeimage.getHeight();
 		code.x = MathUtils.random(0, Gdx.graphics.getWidth() - code.width) % Gdx.graphics.getWidth(); //Random between 0 and right hand side
 		code.y = Gdx.graphics.getHeight();
-		getcodex = code.x; //getter for spawnBombs method
-		getcodey = code.y; //getter for spawnBombs method
-		codearray.add(code); //Add candy to candy array
+		getcodex = code.x; //getter for spawnerrors method
+		getcodey = code.y; //getter for spawnerrors method
+		codearray.add(code); //Add code to code array
 		lastCodeTime = TimeUtils.nanoTime();
 
 	}
@@ -74,8 +74,8 @@ public class StakOverflow extends ApplicationAdapter {
 		error.y = Gdx.graphics.getHeight();
 		geterrorx = error.x;
 		lastErrorTime = TimeUtils.nanoTime();
-		if(Math.abs(getcodex - error.x) > Gdx.graphics.getWidth()/4 && TimeUtils.nanoTime() - lastCodeTime > 100050000) //Only spawn bomb if not near candy
-			errorarray.add(error); //Add bomb to bomb array
+		if(Math.abs(getcodex - error.x) > Gdx.graphics.getWidth()/4 && TimeUtils.nanoTime() - lastCodeTime > 100050000) //Only spawn error if not near code
+			errorarray.add(error); //Add error to error array
 
 
 	}
@@ -100,17 +100,17 @@ public class StakOverflow extends ApplicationAdapter {
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); //Set camera. False means y points up
 		batch = new SpriteBatch(); //Helper class to draw images
 
-		//Instantiate hippo 'rectangle'
+		//Instantiate doug 'rectangle'
 		doug = new Rectangle();
 		doug.width = (int) (Gdx.graphics.getWidth() *dougimage.getWidth() /480);
 		doug.height = Gdx.graphics.getHeight() * dougimage.getHeight() /800;
 		doug.x = Gdx.graphics.getWidth()/2 - doug.width / 2;
 		doug.y = 0;
 
-		//Instantiate candy
+		//Instantiate code
 		codearray = new Array<Rectangle>();
 
-		//Instantiate bombs
+		//Instantiate errors
 		errorarray = new Array<Rectangle>();
 		fallingerror();
 
@@ -177,7 +177,7 @@ public class StakOverflow extends ApplicationAdapter {
 			Vector3 touchPos = new Vector3();
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos);
-			if(!dougheld && doug.contains(touchPos.x, touchPos.y)) //If rectangle for doug contains finger touch, the hippo is held
+			if(!dougheld && doug.contains(touchPos.x, touchPos.y)) //If rectangle for doug contains finger touch, the doug is held
 				dougheld = true;
 
 			if(dougheld)
@@ -186,30 +186,30 @@ public class StakOverflow extends ApplicationAdapter {
 		else
 			dougheld = false;
 
-		if(doug.x < 0) //Doesn't let hippo go left past bound
+		if(doug.x < 0) //Doesn't let doug go left past bound
 			doug.x = 0;
 
 		if(doug.x + doug.getWidth() > Gdx.graphics.getWidth()) //Doesn't let doug go right past bound
 			doug.x = Gdx.graphics.getWidth() - doug.getWidth();
 
-		//Creates new bomb if certain criteria are met
+		//Creates new error if certain criteria are met
 		if(Math.abs(getcodex - geterrorx) > Gdx.graphics.getWidth()/4 && TimeUtils.nanoTime() - lastCodeTime > 100050000 && (TimeUtils.nanoTime() - lastErrorTime)/2 > 1000000000)
 			fallingerror();
 
-		//Creates new candy after a certain amount of time
+		//Creates new code after a certain amount of time
 		if(TimeUtils.nanoTime() - lastCodeTime > (500000000 - (score * 3000000)))
 			fallingcode();
 
 
-		//Iterate through bomb array
-		Iterator<Rectangle> iterbomb = errorarray.iterator();
-		while(iterbomb.hasNext())
+		//Iterate through error array
+		Iterator<Rectangle> itererror = errorarray.iterator();
+		while(itererror.hasNext())
 		{
-			Rectangle bomb = iterbomb.next();
+			Rectangle error = itererror.next();
 
-			if(bomb.y +64 < 0) //If bomb does NOT hit hippo add point, delete
+			if(error.y +64 < 0) //If error does NOT hit doug add point, delete
 			{
-				iterbomb.remove();
+				itererror.remove();
 				score++;
 				yourScoreName = "Score: " + score;
 				if (score > highscore)
@@ -218,32 +218,32 @@ public class StakOverflow extends ApplicationAdapter {
 					yourHighScoreName = "High Score: " + highscore;
 				}
 			}
-			else if (bomb.overlaps(doug))
+			else if (error.overlaps(doug))
 			{
-				iterbomb.remove();
+				itererror.remove();
 				state = END_STATE;
 			}
 
-			bomb.y = (float) (bomb.y - ((750 + 2.8*(score +1) ) * Gdx.graphics.getDeltaTime())); //Move n pixels/unit (changes based on score to make it harder:) )
+			error.y = (float) (error.y - ((750 + 2.8*(score +1) ) * Gdx.graphics.getDeltaTime())); //Move n pixels/unit (changes based on score to make it harder:) )
 
 		}
 
-		//Iterate through candy array
+		//Iterate through code array
 		Iterator<Rectangle> iter = codearray.iterator();
 		while(iter.hasNext())
 		{
-			Rectangle candy = iter.next();
+			Rectangle code = iter.next();
 
-			if(candy.y +64 < 0) //When it leaves screen remove candy
+			if(code.y +64 < 0) //When it leaves screen remove code
 			{
 				iter.remove();
 				state = END_STATE;
 			}
 
-			candy.y = (float) (candy.y - ((750 + 2.8*(score +1) ) * Gdx.graphics.getDeltaTime())); //Move n pixels/unit (changes based on score to make it harder:) )
+			code.y = (float) (code.y - ((750 + 2.8*(score +1) ) * Gdx.graphics.getDeltaTime())); //Move n pixels/unit (changes based on score to make it harder:) )
 
-			//When candy hits hippo get rid of it and add score
-			if(candy.overlaps(doug))
+			//When code hits doug get rid of it and add score
+			if(code.overlaps(doug))
 			{
 				iter.remove();
 				score++;
@@ -320,23 +320,23 @@ public class StakOverflow extends ApplicationAdapter {
 			yourBitmapFontName.draw(batch, yourScoreName, (float)(Gdx.graphics.getWidth() * .05), (float)(Gdx.graphics.getHeight() * .98));
 			batch.end();
 
-			//Render Hippo
+			//Render doug
 			batch.setProjectionMatrix(camera.combined);
 			batch.begin();
 			batch.draw(dougimage, doug.x, doug.y, Gdx.graphics.getWidth() * dougimage.getWidth() /480, Gdx.graphics.getHeight() * dougimage.getHeight() /800);
 			batch.end();
 
-			//Render candy
+			//Render code
 			batch.begin();
-			for(Rectangle candy: codearray) {
-				batch.draw(codeimage, candy.x, candy.y, Gdx.graphics.getWidth() * codeimage.getWidth() /480, Gdx.graphics.getHeight() * codeimage.getHeight() /800);
+			for(Rectangle code: codearray) {
+				batch.draw(codeimage, code.x, code.y, Gdx.graphics.getWidth() * codeimage.getWidth() /480, Gdx.graphics.getHeight() * codeimage.getHeight() /800);
 			}
 			batch.end();
 
-			//Render bombs
+			//Render errors
 			batch.begin();
-			for(Rectangle bomb: errorarray) {
-				batch.draw(errorimage, bomb.x, bomb.y, Gdx.graphics.getWidth() * errorimage.getWidth() /480, Gdx.graphics.getHeight() * errorimage.getHeight() /800);
+			for(Rectangle error: errorarray) {
+				batch.draw(errorimage, error.x, error.y, Gdx.graphics.getWidth() * errorimage.getWidth() /480, Gdx.graphics.getHeight() * errorimage.getHeight() /800);
 			}
 			batch.end();
 
